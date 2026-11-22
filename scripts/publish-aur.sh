@@ -24,21 +24,25 @@ export GIT_SSH_COMMAND="ssh -i $tmp/id -o IdentitiesOnly=yes -o StrictHostKeyChe
 # Prove the key is accepted before blaming the package base for a failed clone.
 bash scripts/check-aur.sh "$tmp/id"
 
-# Cloning keeps the AUR history intact; force-pushing a single commit does not.
-# AUR hands out an empty repository for any name that does not exist yet, so a
-# clone alone proves nothing about the base.
-git clone --quiet "ssh://aur@aur.archlinux.org/${pkgbase}.git" "$tmp/aur"
-git -C "$tmp/aur" rev-parse --verify -q HEAD >/dev/null ||
-  { echo "error: ${pkgbase} has no history on the AUR; submit the base at https://aur.archlinux.org/submit/ first" >&2; exit 1; }
+# The AUR has taken submissions over git since 2026-11: a push to a name with no
+# history creates the package base, so there is no web form in this path. An
+# existing base is cloned so its history and co-maintainers survive.
+git -c advice.defaultBranchName=false -c init.defaultBranch=master \
+  clone --quiet "ssh://aur@aur.archlinux.org/${pkgbase}.git" "$tmp/aur"
 
 install -m644 PKGBUILD .SRCINFO "$tmp/aur/"
 git -C "$tmp/aur" add PKGBUILD .SRCINFO
-if git -C "$tmp/aur" diff --cached --quiet; then
-  echo "AUR already at ${pkgver}"
-  exit 0
+if git -C "$tmp/aur" rev-parse --verify -q HEAD >/dev/null; then
+  if git -C "$tmp/aur" diff --cached --quiet; then
+    echo "${pkgbase} is already at ${pkgver}"
+    exit 0
+  fi
+  message="update to ${pkgver}"
+else
+  message="initial upload: ${pkgver}"
 fi
 
 git -C "$tmp/aur" -c user.name='aur-updater' -c user.email='aur-updater@localhost' \
-  commit --quiet -m "update to ${pkgver}"
-git -C "$tmp/aur" push --quiet origin master
+  commit --quiet -m "$message"
+git -C "$tmp/aur" push --quiet origin HEAD:master
 echo "published ${pkgbase} ${pkgver} to the AUR"

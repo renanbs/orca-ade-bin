@@ -60,10 +60,9 @@ Add an SSH key whose AUR account owns the package base as the repository secret
 `AUR_SSH_PRIVATE_KEY`. Without it the workflow still commits to this repository and
 skips the AUR push.
 
-The base itself must exist first: submit the `PKGBUILD` once at
-<https://aur.archlinux.org/submit/>. The script proves the key is accepted and
-that the base has history before touching anything; the AUR hands out an empty
-repository for names that do not exist yet.
+Since 2026-11 the AUR takes submissions over git: the first push to a package
+name creates the base, so no web form is involved. The script proves the key is
+accepted, then either creates the base or commits on top of its history.
 
 Every push run also probes the secret with `scripts/check-aur.sh`, non-fatally,
 so a rotated or revoked key shows up as an annotation long before the next
@@ -73,6 +72,11 @@ The base is `orca-ade-bin` because upstream's `orca-ide` name collides with GNOM
 Orca and the existing `orca-ide-bin` base belongs to another maintainer.
 `provides=orca-ide` plus the `conflicts` list keep every Orca repackaging in the
 AUR mutually exclusive.
+
+## License
+
+This repository's packaging files are licensed under 0BSD (see `LICENSE`). The
+packaged software is MIT, see `/usr/share/licenses/orca-ade-bin/LICENSE`.
 
 ## Limitations
 
