@@ -1,5 +1,5 @@
 # Maintainer: Renan BS <renan.biegel@gmail.com>
-pkgname=orca-ide-bin
+pkgname=orca-ade-bin
 pkgver=1.4.269
 pkgrel=1
 pkgdesc='Next-gen IDE for parallel agentic development'
@@ -20,7 +20,7 @@ optdepends=(
 )
 makedepends=('libarchive')
 provides=("orca-ide=${pkgver}")
-conflicts=('orca-ide' 'onorca-bin' 'stably-orca' 'stably-orca-bin' 'stably-orca-git')
+conflicts=('orca-ide' 'orca-ide-bin' 'onorca-bin' 'stably-orca' 'stably-orca-bin' 'stably-orca-git')
 options=('!strip' '!debug')
 
 # Upstream ships a self-contained Electron runtime in /opt/Orca, so the package

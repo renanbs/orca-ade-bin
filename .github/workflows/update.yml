@@ -60,6 +60,7 @@ jobs:
         run: su builder -c 'makepkg --printsrcinfo | diff -u .SRCINFO -'
 
       - name: Build and verify
+        if: github.event_name == 'push' || steps.bump.outputs.changed == 'true'
         run: su builder -c 'bash scripts/build.sh'
 
       - name: Commit repository

@@ -1,4 +1,4 @@
-# orca-ide-bin
+# orca-ade-bin
 
 Arch Linux package for [Orca](https://onorca.dev/), repackaged from the upstream
 Debian build.
@@ -15,14 +15,14 @@ Dependencies mirror the Debian `Depends` field; `xorg-server-xvfb`, `xdotool`,
 
 ```sh
 git clone <this repo>
-cd orca-ide-bin
+cd orca-ade-bin
 makepkg -si
 ```
 
 Or, once published:
 
 ```sh
-yay -S orca-ide-bin
+yay -S orca-ade-bin
 ```
 
 ## Automated updates
@@ -52,10 +52,10 @@ Add an SSH key whose AUR account owns the package base as the repository secret
 `AUR_SSH_KEY`. Without it the workflow still commits to this repository and
 skips the AUR push.
 
-The AUR package base `orca-ide-bin` already belongs to another maintainer. To
-publish under your own name, rename `pkgname` in `PKGBUILD` (and regenerate
-`.SRCINFO`) to a free base such as `orca-ade-bin`; `provides`/`conflicts` keep it
-mutually exclusive with the other Orca packages.
+The base is `orca-ade-bin` because upstream's `orca-ide` name collides with GNOME
+Orca and the existing `orca-ide-bin` base belongs to another maintainer.
+`provides=orca-ide` plus the `conflicts` list keep every Orca repackaging in the
+AUR mutually exclusive.
 
 ## Limitations
 

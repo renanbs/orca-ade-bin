@@ -1,4 +1,4 @@
-pkgbase = orca-ide-bin
+pkgbase = orca-ade-bin
 	pkgdesc = Next-gen IDE for parallel agentic development
 	pkgver = 1.4.269
 	pkgrel = 1
@@ -46,6 +46,7 @@ pkgbase = orca-ide-bin
 	optdepends = vulkan-icd-loader: Vulkan backend for GPU-backed features
 	provides = orca-ide=1.4.269
 	conflicts = orca-ide
+	conflicts = orca-ide-bin
 	conflicts = onorca-bin
 	conflicts = stably-orca
 	conflicts = stably-orca-bin
@@ -59,4 +60,4 @@ pkgbase = orca-ide-bin
 	source_aarch64 = https://github.com/stablyai/orca/releases/download/v1.4.269/orca-ide_1.4.269_arm64.deb
 	sha256sums_aarch64 = 3675a822c4e2b47c8cf460d6bae633b6c893714399f6561689ef84f7d28827d4
 
-pkgname = orca-ide-bin
+pkgname = orca-ade-bin
