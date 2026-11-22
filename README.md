@@ -49,10 +49,12 @@ Nothing is committed or published when any step fails, so a restructured
 upstream asset or a moved CLI shim stops the pipeline instead of shipping a
 broken package.
 
-Hourly is deliberate: upstream publishes several releases per day, so a daily
-run would sit behind most of the time. A run without a new version downloads
-nothing; on a real bump only the source of the architecture being built is
-fetched, by `makepkg` itself.
+The schedule is twice a day (11:17 and 23:17 UTC, 08:17 and 20:17 in UTC-3),
+which keeps the package within about ten hours of upstream. Upstream publishes
+several releases per day, so this is a deliberate lag-versus-noise trade; run
+the workflow manually with "Run workflow" when you want a release sooner. A run
+without a new version downloads nothing; on a real bump only the source of the
+architecture being built is fetched, by `makepkg` itself.
 
 ### AUR publishing
 
