@@ -30,26 +30,29 @@ yay -S orca-ade-bin
 `.github/workflows/update.yml` runs hourly and:
 
 1. asks the GitHub API for the newest stable release of `stablyai/orca`;
-2. on a new `vX.Y.Z`, downloads both `.deb` assets and the license, then
-   rewrites `pkgver`, resets `pkgrel` and refreshes every checksum
+2. on a new `vX.Y.Z`, reads the electron-builder manifests (`latest-linux.yml`,
+   `latest-linux-arm64.yml`) for the sha512 of both `.deb` assets, cross-checks
+   their sizes against the release API, and downloads only the license before
+   rewriting `pkgver`, resetting `pkgrel` and refreshing every checksum
    (`scripts/bump.sh`);
 3. builds with `makepkg` and proves the result by installing it and checking
    `orca-ide --version` against `pkgver` (`scripts/build.sh`);
 4. commits `PKGBUILD` + `.SRCINFO`;
-5. pushes to the AUR when `AUR_SSH_KEY` exists (`scripts/publish-aur.sh`).
+5. pushes to the AUR when `AUR_SSH_PRIVATE_KEY` exists (`scripts/publish-aur.sh`).
 
 Nothing is committed or published when any step fails, so a restructured
 upstream asset or a moved CLI shim stops the pipeline instead of shipping a
 broken package.
 
 Hourly is deliberate: upstream publishes several releases per day, so a daily
-run would sit behind most of the time. A run without a new version only makes
-one API call; the ~210 MB asset download happens only on a real bump.
+run would sit behind most of the time. A run without a new version downloads
+nothing; on a real bump only the source of the architecture being built is
+fetched, by `makepkg` itself.
 
 ### AUR publishing
 
 Add an SSH key whose AUR account owns the package base as the repository secret
-`AUR_SSH_KEY`. Without it the workflow still commits to this repository and
+`AUR_SSH_PRIVATE_KEY`. Without it the workflow still commits to this repository and
 skips the AUR push.
 
 The base is `orca-ade-bin` because upstream's `orca-ide` name collides with GNOME

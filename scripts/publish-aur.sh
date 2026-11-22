@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Push PKGBUILD + .SRCINFO to the AUR package base, on top of its existing
-# history. No-op when AUR_SSH_KEY is absent, so the repo also works without
+# history. No-op when AUR_SSH_PRIVATE_KEY is absent, so the repo also works without
 # AUR publishing configured.
 set -euo pipefail
 cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
-if [[ -z ${AUR_SSH_KEY:-} ]]; then
-  echo '::notice::AUR_SSH_KEY is not set; skipping the AUR push'
+if [[ -z ${AUR_SSH_PRIVATE_KEY:-} ]]; then
+  echo '::notice::AUR_SSH_PRIVATE_KEY is not set; skipping the AUR push'
   exit 0
 fi
 
@@ -17,7 +17,7 @@ pkgver=$(sed -n 's/^pkgver=//p' PKGBUILD)
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
-printf '%s\n' "$AUR_SSH_KEY" >"$tmp/id"
+printf '%s\n' "$AUR_SSH_PRIVATE_KEY" >"$tmp/id"
 chmod 600 "$tmp/id"
 export GIT_SSH_COMMAND="ssh -i $tmp/id -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$tmp/known_hosts"
 

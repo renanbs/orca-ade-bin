@@ -70,5 +70,5 @@ jobs:
       - name: Publish to AUR
         if: steps.bump.outputs.changed == 'true'
         env:
-          AUR_SSH_KEY: ${{ secrets.AUR_SSH_KEY }}
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
         run: su builder -c 'bash scripts/publish-aur.sh'
