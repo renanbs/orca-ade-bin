@@ -55,6 +55,10 @@ jobs:
             echo "version=$(cat .update/version)"
           } >>"$GITHUB_OUTPUT"
 
+      - name: Check .SRCINFO is current
+        if: github.event_name == 'push'
+        run: su builder -c 'makepkg --printsrcinfo | diff -u .SRCINFO -'
+
       - name: Build and verify
         run: su builder -c 'bash scripts/build.sh'
 

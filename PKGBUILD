@@ -1,4 +1,4 @@
-# Maintainer: Renan <renan at example dot com>
+# Maintainer: Renan BS <renan.biegel@gmail.com>
 pkgname=orca-ide-bin
 pkgver=1.4.269
 pkgrel=1
@@ -19,7 +19,7 @@ optdepends=(
   'vulkan-icd-loader: Vulkan backend for GPU-backed features'
 )
 makedepends=('libarchive')
-provides=('orca-ide')
+provides=("orca-ide=${pkgver}")
 conflicts=('orca-ide' 'onorca-bin' 'stably-orca' 'stably-orca-bin' 'stably-orca-git')
 options=('!strip' '!debug')
 
@@ -28,8 +28,8 @@ options=('!strip' '!debug')
 _upstream='https://github.com/stablyai/orca'
 _debrel="${_upstream}/releases/download/v${pkgver}"
 source=("LICENSE-${pkgver}::https://raw.githubusercontent.com/stablyai/orca/v${pkgver}/LICENSE")
-source_x86_64=("orca-ide_${pkgver}_amd64.deb::${_debrel}/orca-ide_${pkgver}_amd64.deb")
-source_aarch64=("orca-ide_${pkgver}_arm64.deb::${_debrel}/orca-ide_${pkgver}_arm64.deb")
+source_x86_64=("${_debrel}/orca-ide_${pkgver}_amd64.deb")
+source_aarch64=("${_debrel}/orca-ide_${pkgver}_arm64.deb")
 sha256sums=('ff1b611f80580d49f4b97e93a97b24eb050b0671b26b8afe16341fab699112f3')
 sha256sums_x86_64=('c3ed00c4320ce6186a0d601923df47945a130a6691774a54333f08ecfa9e51a6')
 sha256sums_aarch64=('3675a822c4e2b47c8cf460d6bae633b6c893714399f6561689ef84f7d28827d4')

@@ -7,5 +7,5 @@ version=${1:?usage: commit.sh <version>}
 git config user.name 'github-actions[bot]'
 git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 git add PKGBUILD .SRCINFO
-git commit -m "update to ${version}"
+git commit -m "update to ${version} [skip ci]"
 git push
