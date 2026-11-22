@@ -65,6 +65,10 @@ The base itself must exist first: submit the `PKGBUILD` once at
 that the base has history before touching anything; the AUR hands out an empty
 repository for names that do not exist yet.
 
+Every push run also probes the secret with `scripts/check-aur.sh`, non-fatally,
+so a rotated or revoked key shows up as an annotation long before the next
+release needs it.
+
 The base is `orca-ade-bin` because upstream's `orca-ide` name collides with GNOME
 Orca and the existing `orca-ide-bin` base belongs to another maintainer.
 `provides=orca-ide` plus the `conflicts` list keep every Orca repackaging in the

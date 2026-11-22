@@ -59,6 +59,15 @@ jobs:
         if: github.event_name == 'push'
         run: su builder -c 'makepkg --printsrcinfo | diff -u .SRCINFO -'
 
+      # Non-fatal: a rotated or revoked key must be visible early, but it must
+      # not fail a package build that is otherwise fine.
+      - name: Probe AUR access
+        if: github.event_name == 'push'
+        continue-on-error: true
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: su builder -c 'bash scripts/check-aur.sh'
+
       - name: Build and verify
         if: github.event_name == 'push' || steps.bump.outputs.changed == 'true'
         run: su builder -c 'bash scripts/build.sh'
