@@ -1,0 +1,69 @@
+name: update
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - PKGBUILD
+      - .SRCINFO
+      - scripts/**
+      - .github/workflows/update.yml
+
+permissions:
+  contents: write
+
+# Builds are serialised: two makepkg runs in the same checkout would collide.
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    timeout-minutes: 90
+    env:
+      HOME: /home/builder
+    steps:
+      - name: Prepare container
+        run: |
+          set -euo pipefail
+          # The mirror can be mid-sync when the job starts; one retry settles it.
+          pacman -Syu --noconfirm --needed base-devel git openssh jq sudo >/dev/null ||
+            { sleep 20; pacman -Syu --noconfirm --needed base-devel git openssh jq sudo >/dev/null; }
+          id builder >/dev/null 2>&1 || useradd --create-home builder
+          printf 'builder ALL=(ALL) NOPASSWD: ALL\n' >/etc/sudoers.d/builder
+          chmod 440 /etc/sudoers.d/builder
+
+      - uses: actions/checkout@v4
+
+      - name: Hand workspace to builder
+        run: chown -R builder:builder "$GITHUB_WORKSPACE"
+
+      - name: Check upstream
+        id: bump
+        if: github.event_name != 'push'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          su builder -c 'bash scripts/bump.sh'
+          {
+            echo "changed=$(cat .update/changed)"
+            echo "version=$(cat .update/version)"
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Build and verify
+        run: su builder -c 'bash scripts/build.sh'
+
+      - name: Commit repository
+        if: steps.bump.outputs.changed == 'true'
+        run: su builder -c 'bash scripts/commit.sh ${{ steps.bump.outputs.version }}'
+
+      - name: Publish to AUR
+        if: steps.bump.outputs.changed == 'true'
+        env:
+          AUR_SSH_KEY: ${{ secrets.AUR_SSH_KEY }}
+        run: su builder -c 'bash scripts/publish-aur.sh'
