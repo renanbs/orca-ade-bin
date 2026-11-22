@@ -37,7 +37,7 @@ jobs:
           printf 'builder ALL=(ALL) NOPASSWD: ALL\n' >/etc/sudoers.d/builder
           chmod 440 /etc/sudoers.d/builder
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Hand workspace to builder
         run: chown -R builder:builder "$GITHUB_WORKSPACE"
@@ -63,12 +63,12 @@ jobs:
         if: github.event_name == 'push' || steps.bump.outputs.changed == 'true'
         run: su builder -c 'bash scripts/build.sh'
 
-      - name: Commit repository
-        if: steps.bump.outputs.changed == 'true'
-        run: su builder -c 'bash scripts/commit.sh ${{ steps.bump.outputs.version }}'
-
       - name: Publish to AUR
         if: steps.bump.outputs.changed == 'true'
         env:
           AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
         run: su builder -c 'bash scripts/publish-aur.sh'
+
+      - name: Commit repository
+        if: steps.bump.outputs.changed == 'true'
+        run: su builder -c 'bash scripts/commit.sh ${{ steps.bump.outputs.version }}'

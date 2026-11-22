@@ -37,8 +37,13 @@ yay -S orca-ade-bin
    (`scripts/bump.sh`);
 3. builds with `makepkg` and proves the result by installing it and checking
    `orca-ide --version` against `pkgver` (`scripts/build.sh`);
-4. commits `PKGBUILD` + `.SRCINFO`;
-5. pushes to the AUR when `AUR_SSH_PRIVATE_KEY` exists (`scripts/publish-aur.sh`).
+4. pushes to the AUR when `AUR_SSH_PRIVATE_KEY` exists (`scripts/publish-aur.sh`);
+5. commits `PKGBUILD` + `.SRCINFO` here.
+
+The AUR push runs before the commit on purpose: if it fails, this repository
+stays on the old version and the next hourly run retries. Both steps are
+idempotent, so a failed commit after a successful AUR push only repeats the push
+(which reports the version is already there) and commits.
 
 Nothing is committed or published when any step fails, so a restructured
 upstream asset or a moved CLI shim stops the pipeline instead of shipping a
