@@ -56,6 +56,17 @@ the workflow manually with "Run workflow" when you want a release sooner. A run
 without a new version downloads nothing; on a real bump only the source of the
 architecture being built is fetched, by `makepkg` itself.
 
+### Orca automation
+
+An Orca automation ("Orca AUR watch", daily at 09:30 America/Sao_Paulo) watches
+this repository with an agent: it compares `PKGBUILD`, the upstream release and
+the AUR version, dispatches the workflow when the package is behind, and repairs
+`PKGBUILD`/`scripts/` when a run fails. `scripts/needs-attention.sh` is its
+precheck, so the run only starts when something is actually off.
+
+It is a supervisor, not a second publisher: the GitHub workflow still does the
+bump, the build and the AUR push whether or not the machine is on.
+
 ### AUR publishing
 
 Add an SSH key whose AUR account owns the package base as the repository secret
